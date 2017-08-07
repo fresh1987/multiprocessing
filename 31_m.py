@@ -1,4 +1,3 @@
-
 def f(n):
     return n*n
 
@@ -21,14 +20,14 @@ import time
 
 def f(n):
     sum = 0
-    for x in range(1000):
+    for x in range(10000):
         sum += x*x
     return sum
 
 if __name__ == '__main__':
     t1 = time.time()
     p = Pool()
-    result = p.map(f, range(100000))
+    result = p.map(f, range(10000))
     p.close()
     p.join()
 
@@ -36,7 +35,7 @@ if __name__ == '__main__':
 
     t2 = time.time()
     result = []
-    for x in range(100000):
+    for x in range(10000):
         result.append(f(x))
 
     print("Serial processing took: ", time.time()-t2)
@@ -47,3 +46,6 @@ if __name__ == '__main__':
 #    ('Serial processing took: ', 5.801117897033691)
 
 # !!!!!!!!!!!!!! MAKE printscreen 2 and insert them in the presentation
+
+# !!!! printscreen c task managera (5 process on 4-core proccess)
+
