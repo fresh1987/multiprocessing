@@ -4,8 +4,7 @@ import os
 from random import choice,randint
 from string import ascii_letters
 import time
-
-print(cpu_count())
+import zipfile
 
 class mainClass(object):
     def __init__(self):
@@ -23,55 +22,37 @@ class mainClass(object):
             self.set_id.add(''.join(choice(ascii_letters) for i in range(15)))
         return
 
-
     def createArr(self, arr_no):
-        time.sleep(1)
+        z = zipfile.ZipFile(self.path + 'Arr_' + str(arr_no), 'w')
         for i in range(self.count_XMLfile):
-            file_name = self.path + 'XMLfile_' + str(arr_no) + ' ' + str(i)
-            file = open(file_name, 'w')
+            file_name = 'XMLfile_' + str(arr_no) + ' ' + str(i)
             stroka = "<root>\n\t<var name='id' value='%s'/>\n\t<var name='level' value='%s'/> \n\t<objects>\n" %(self.set_id.pop(), randint(1,100))
             for j in range(randint(1,10)):
                 stroka+="\t\t<object name='%s'>\n" %(''.join(choice(ascii_letters) for k in range(randint(5,30))))
             stroka += "\t</objects>\n</root>"
-            file.write(stroka)
-            file.close()
-        return arr_no
-
+            z.writestr(file_name, stroka)
+        z.close()
+        return
 
     def createArrs(self):
-        #arrs_to_process = int(self.count_arrs/cpu_count())
         t1 = time.time()
         if __name__ == '__main__':
             self.get_set_of_id() # get set of string id
             p = Pool()
-            result = p.map(self.createArr, range(self.count_arrs))
+            p.map(self.createArr, range(self.count_arrs))
             p.close()
             p.join()
         print time.time() - t1
 
+
+class secondTask(object):
+    def __init__(self):
+        pass
+    def 
+
+
 A = mainClass()
 A.createArrs()
 
+#print(os.path)
 
-
-def f(n):
-    sum = 0
-    for x in range(1000):
-        sum += x*x
-    return sum
-
-if __name__ == '__1main__':
-    t1 = time.time()
-    p = Pool()
-    result = p.map(f, range(100000))
-    p.close()
-    p.join()
-
-    print ('Pool took:', time.time() - t1)
-
-    t2 = time.time()
-    result = []
-    for x in range(100000):
-        result.append(f(x))
-
-    print("Serial processing took: ", time.time()-t2)
