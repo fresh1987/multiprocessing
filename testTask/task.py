@@ -47,12 +47,25 @@ class mainClass(object):
 
 class secondTask(object):
     def __init__(self):
+        #self.path = ''
+        #Wwhile self.path =='' : self.path = raw_input("Input path to ZIPfiles\n")
+        #os.path.join(self.path, '')
+        self.path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
+        a = os.walk(self.path)
+        print a[0]
+        for nom in a:
+            print nom
+        #self.count_arrs = os.walk(self.path)[2]
+        #print(self.count_arrs)
+    def make_csv(self):
         pass
-    def 
 
 
 A = mainClass()
-A.createArrs()
+#A.createArrs()
+
+B = secondTask()
+
 
 #print(os.path)
 
