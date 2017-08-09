@@ -6,12 +6,11 @@ from string import ascii_letters
 import time
 import zipfile
 
-class mainClass(object):
+
+class firstTask(object):
     def __init__(self):
         self.count_arrs = 50
         self.count_XMLfile = 100
-        #self.path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
-        self.path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
         self.set_id = set()
 
     def get_set_of_id(self):
@@ -23,7 +22,7 @@ class mainClass(object):
         return
 
     def createArr(self, arr_no):
-        z = zipfile.ZipFile(self.path + 'Arr_' + str(arr_no), 'w')
+        z = zipfile.ZipFile(path + 'Arr_' + str(arr_no) + '.zip', 'w')
         for i in range(self.count_XMLfile):
             file_name = 'XMLfile_' + str(arr_no) + ' ' + str(i)
             stroka = "<root>\n\t<var name='id' value='%s'/>\n\t<var name='level' value='%s'/> \n\t<objects>\n" %(self.set_id.pop(), randint(1,100))
@@ -47,25 +46,52 @@ class mainClass(object):
 
 class secondTask(object):
     def __init__(self):
-        #self.path = ''
-        #Wwhile self.path =='' : self.path = raw_input("Input path to ZIPfiles\n")
-        #os.path.join(self.path, '')
-        self.path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
-        a = os.walk(self.path)
-        print a[0]
-        for nom in a:
-            print nom
-        #self.count_arrs = os.walk(self.path)[2]
-        #print(self.count_arrs)
+        # Create and sort list of Arr Zip-files
+        self.list_of_zips = []
+        for d, dirs, files in os.walk(path):
+            for f in files:
+                self.list_of_zips.append(f)
+        #self.list_of_files.sort()
+
+    def parse_Zip_arr(self, nom_arr):
+        z = zipfile.ZipFile(path+self.list_of_zips[nom_arr], 'r')
+        #print (z.read(self.list_of_files[nom_arr]))
+
+        list_of_files_in_zip = z.namelist()
+        for fname in list_of_files_in_zip:
+            list_of_object = []
+            for string in open(fname, 'r').readlines():
+                if "name='id'" in string:
+                    string.split("value='")[1].split("'")[0]
+                if "name='level'" in string:
+                    string.split("value='")[1].split("'")[0]
+                if "object name='" in string:
+                    list_of_object.append(string.split("object name='")[1].split("'")[0])
+
+
+
+
+
+                        #print z.read('/data.txt')
+
     def make_csv(self):
-        pass
+        p = Pool()
+        #print '(len(self.list_of_files) ', range(len(self.list_of_files))
+        p.map(self.parse_Zip_arr, range(len(self.list_of_zips)))
+        p.close()
+        p.join()
 
 
-A = mainClass()
-#A.createArrs()
+global path
+#path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
+path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
-B = secondTask()
+#B = firstTask()
+#B.createArrs()
 
+C = secondTask()
+C.make_csv()
 
 #print(os.path)
 
+# !  Arr - not archive !!!
