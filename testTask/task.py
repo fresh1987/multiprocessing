@@ -1,3 +1,4 @@
+#coding: utf-8
 from multiprocess import Pool
 from multiprocessing import cpu_count
 import os
@@ -5,7 +6,7 @@ from random import choice,randint
 from string import ascii_letters
 import time
 import zipfile
-import csv
+
 
 
 class firstTask(object):
@@ -51,24 +52,26 @@ class secondTask(object):
         self.list_of_zips = []
         for d, dirs, files in os.walk(path):
             for f in files:
-                self.list_of_zips.append(f)
+                if ".zip" in f:
+                    self.list_of_zips.append(f)
         #self.list_of_files.sort()
         self.out_csv1 = path+'csv1.csv'
         self.out_csv2 = path+'csv2.csv'
 
     def parse_Zip_arr(self, nom_arr):
-        #print path+self.list_of_zips[nom_arr]
-        z = zipfile.ZipFile(path+self.list_of_zips[nom_arr], 'r')
-        #print (z.read(self.list_of_files[nom_arr]))
+        file1 = open(self.out_csv1, "w")
+        file1.write("id" + ',' + "level" + '\n')
+        file2 = open(self.out_csv2, "w")
+        file2.write("id" + ',' + "object_name" + '\n')
 
+        z = zipfile.ZipFile(path+self.list_of_zips[nom_arr], 'r')
         list_of_files_in_zip = z.namelist()
-        #print list_of_files_in_zip
+
         for fname in list_of_files_in_zip:
             id_value = []
             list_of_object = []
-#            print(z.read(fname).split(os.linesep))
-            for string in z.read(fname).split(os.linesep):
 
+            for string in z.read(fname).split(os.linesep):
                 if "name='id'" in string:
                     id_value.append(string.split("value='")[1].split("'")[0])
                 if "name='level'" in string:
@@ -76,18 +79,13 @@ class secondTask(object):
                 if "object name='" in string:
                     list_of_object.append(string.split("object name='")[1].split("'")[0])
 
-            print id_value
-            with open(self.out_csv1, "w", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerows(id_value)
+            file1.write(id_value[0] + ',' + id_value[1] + '\n')
+            for my_object in list_of_object:
+                file2.write(id_value[0] + ',' + my_object + '\n')
 
-#            with open(self.out_csv2, "w", newline="") as file:
-#                writer = csv.writer(file)
-#                writer.writerows(list_of_object)
+        file1.close()
+        file2.close()
 
-
-
-                        #print z.read('/data.txt')
 
     def make_csv(self):
         p = Pool()
@@ -98,6 +96,7 @@ class secondTask(object):
 
 
 global path
+t1 = time.time()
 #path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
 path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
@@ -107,6 +106,9 @@ B.createArrs()
 C = secondTask()
 C.make_csv()
 
-#print(os.path)
+print(time.time() - t1)
+
+
 
 # !  Arr - not archive !!!
+# !!! проверить только ли строковые занчения в id !!! там есть и не строковые
