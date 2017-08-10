@@ -5,6 +5,7 @@ from random import choice,randint
 from string import ascii_letters
 import time
 import zipfile
+import csv
 
 
 class firstTask(object):
@@ -24,7 +25,7 @@ class firstTask(object):
     def createArr(self, arr_no):
         z = zipfile.ZipFile(path + 'Arr_' + str(arr_no) + '.zip', 'w')
         for i in range(self.count_XMLfile):
-            file_name = 'XMLfile_' + str(arr_no) + ' ' + str(i)
+            file_name = 'XMLfile_' + str(arr_no) + '_' + str(i) + ".xml"
             stroka = "<root>\n\t<var name='id' value='%s'/>\n\t<var name='level' value='%s'/> \n\t<objects>\n" %(self.set_id.pop(), randint(1,100))
             for j in range(randint(1,10)):
                 stroka+="\t\t<object name='%s'>\n" %(''.join(choice(ascii_letters) for k in range(randint(5,30))))
@@ -52,23 +53,37 @@ class secondTask(object):
             for f in files:
                 self.list_of_zips.append(f)
         #self.list_of_files.sort()
+        self.out_csv1 = path+'csv1.csv'
+        self.out_csv2 = path+'csv2.csv'
 
     def parse_Zip_arr(self, nom_arr):
+        #print path+self.list_of_zips[nom_arr]
         z = zipfile.ZipFile(path+self.list_of_zips[nom_arr], 'r')
         #print (z.read(self.list_of_files[nom_arr]))
 
         list_of_files_in_zip = z.namelist()
+        #print list_of_files_in_zip
         for fname in list_of_files_in_zip:
+            id_value = []
             list_of_object = []
-            for string in open(fname, 'r').readlines():
+#            print(z.read(fname).split(os.linesep))
+            for string in z.read(fname).split(os.linesep):
+
                 if "name='id'" in string:
-                    string.split("value='")[1].split("'")[0]
+                    id_value.append(string.split("value='")[1].split("'")[0])
                 if "name='level'" in string:
-                    string.split("value='")[1].split("'")[0]
+                    id_value.append(string.split("value='")[1].split("'")[0])
                 if "object name='" in string:
                     list_of_object.append(string.split("object name='")[1].split("'")[0])
 
+            print id_value
+            with open(self.out_csv1, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(id_value)
 
+#            with open(self.out_csv2, "w", newline="") as file:
+#                writer = csv.writer(file)
+#                writer.writerows(list_of_object)
 
 
 
@@ -86,8 +101,8 @@ global path
 #path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
 path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
-#B = firstTask()
-#B.createArrs()
+B = firstTask()
+B.createArrs()
 
 C = secondTask()
 C.make_csv()
