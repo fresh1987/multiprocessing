@@ -3,7 +3,7 @@ from multiprocess import Pool, Lock
 import os
 from random import choice,randint
 from string import ascii_letters
-from  time import time
+from  time import time, sleep
 import zipfile
 
 
@@ -15,16 +15,7 @@ class firstTask(object):
         self.set_id = set()
 
     def get_set_of_id(self):
-        # !!!!!!!!!!!!!!!! переделать !!! т.к. не уникальные значения
         set_size = self.count_arrs * self.count_XMLfile
-        while len(self.set_id) < set_size:
-            id = ''.join(choice(ascii_letters) for i in range(15))
-            if id not in self.set_id:
-                print id
-                self.set_id.add(id)
-        return
-
-
         for i in range(set_size):
             self.set_id.add(''.join(choice(ascii_letters) for i in range(15)))
         while len(self.set_id) < set_size:
@@ -66,14 +57,21 @@ class secondTask(object):
         self.out_csv1 = path+'csv1.csv'
         self.out_csv2 = path+'csv2.csv'
 
-    def parse_Zip_arr(self, nom_arr):
-        z = zipfile.ZipFile(path+self.list_of_zips[nom_arr], 'r')
+    def parse_Zip_arr(self, nom_arr,lock):
+        z = zipfile.ZipFile(path + self.list_of_zips[nom_arr], 'r')
         list_of_files_in_zip = z.namelist()
 
+        print "!!!!!!!" + self.list_of_zips[nom_arr]
+
+        #print(self.list_of_zips[nom_arr])
+        #sleep(20)
+        lock.acquire()
         file1 = open(self.out_csv1, "a")
         file2 = open(self.out_csv2, "a")
 
         for fname in list_of_files_in_zip:
+            print fname
+
             id_value = []
             list_of_object = []
 
@@ -88,6 +86,7 @@ class secondTask(object):
             file1.write(id_value[0] + ',' + id_value[1] + '\n')
             for my_object in list_of_object:
                 file2.write(id_value[0] + ',' + my_object + '\n')
+        lock.release()
 
         file1.close()
         file2.close()
@@ -100,9 +99,17 @@ class secondTask(object):
         file2.write("id" + ',' + "object_name" + '\n')
 
         p = Pool()
-        p.map(self.parse_Zip_arr, range(len(self.list_of_zips)))
-        p.close()
-        p.join()
+        list_of_process = []
+        for i in range(len(self.list_of_zips)):
+            list_of_process.append(p.Process(target=self.parse_Zip_arr, args=(i,lock)))
+        for i in range(len(self.list_of_zips)):
+            list_of_process[i].start()
+        for i in range(len(self.list_of_zips)):
+            list_of_process[i].join()
+
+        #p.map(self.parse_Zip_arr, range(len(self.list_of_zips)))
+        #p.close()
+        #p.join()
 
         file1.close()
         file2.close()
@@ -110,13 +117,14 @@ class secondTask(object):
 
 global path
 lock = Lock()
-t1 = time()
+#t1 = time()
 #path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
 path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
 B = firstTask()
 B.createArrs()
 
+t1 = time()
 C = secondTask()
 C.make_csv()
 
@@ -126,3 +134,6 @@ print(time() - t1)
 
 # !  Arr - not archive !!!
 # !!! проверить только ли строковые занчения в id !!! там есть и не строковые
+
+
+# !!!!!!!!! id -- не уникальные GvMtGxVIkQabwQP - повторилось 4 раза в 5000 файлов
