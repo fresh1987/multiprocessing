@@ -6,7 +6,6 @@ def funct(a):
     for k in range(1000):
         for j in range(10000):
             a = j*(j+1)
-    return a
 
 
 if __name__ == "__main__":

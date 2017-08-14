@@ -1,11 +1,10 @@
 #coding: utf-8
-from multiprocess import Pool, Lock
+from multiprocess import Pool, Lock, Process
 import os
 from random import choice,randint
 from string import ascii_letters
 from time import time,sleep
 import zipfile
-
 
 
 class firstTask(object):
@@ -98,10 +97,9 @@ class secondTask(object):
         file2.close()
 
         if __name__ == '__main__':
-            p = Pool()
             list_of_process = []
             for i in range(len(self.list_of_zips)):
-                list_of_process.append(p.Process(target=self.parse_Zip, args=(i,lock)))
+                list_of_process.append(Process(target=self.parse_Zip, args=(i,lock)))
             for i in range(len(self.list_of_zips)):
                 list_of_process[i].start()
             for i in range(len(self.list_of_zips)):
@@ -112,7 +110,7 @@ if __name__ == '__main__':
     global path
     lock = Lock()
     #path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
-    path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
+    path = os.path.join("/home/fresh/2017", '')
 
     # First task: create ZIPs archives with XML files
     A = firstTask()
@@ -127,3 +125,5 @@ if __name__ == '__main__':
 
 
 
+# 1 sleep(3) in parseZip - отрабатывае один раз. Почему????
+# сделать очередь queue

@@ -13,7 +13,7 @@ def calc_square(numbers):
 
 def calc_cube(numbers):
     for n in numbers:
-        #time.sleep(5)
+        time.sleep(5)
         print ('cube' + str(n*n*n))
 
 
