@@ -16,11 +16,10 @@ class firstTask(object):
 
     # Get unique id list for .xml files
     def get_list_of_id(self):
-        set_size = self.count_zips * self.count_XMLfile
-        while len(self.list_id) < set_size:
+        list_size = self.count_zips * self.count_XMLfile
+        while len(self.list_id) < list_size:
             id = ''.join(choice(ascii_letters) for i in range(15))
             if id not in self.list_id:
-                #print id
                 self.list_id.append(id)
 
     # Write XML files to Zip archive
