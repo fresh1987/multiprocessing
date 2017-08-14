@@ -108,11 +108,9 @@ class secondTask(object):
                 list_of_process[i].join()
 
 
-
-
-global path
-lock = Lock()
 if __name__ == '__main__':
+    global path
+    lock = Lock()
     #path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
     path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
