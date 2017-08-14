@@ -12,30 +12,24 @@ class firstTask(object):
     def __init__(self):
         self.count_arrs = 50
         self.count_XMLfile = 100
-        self.set_id = set()
+        self.list_id = []
 
     def get_set_of_id(self):
-        # !!!!!!!!!!!!!!!! переделать !!! т.к. не уникальные значения
         set_size = self.count_arrs * self.count_XMLfile
-        while len(self.set_id) < set_size:
+        while len(self.list_id) < set_size:
             id = ''.join(choice(ascii_letters) for i in range(15))
-            if id not in self.set_id:
+            if id not in self.list_id:
                 print id
-                self.set_id.add(id)
+                self.list_id.append(id)
         return
 
-
-        for i in range(set_size):
-            self.set_id.add(''.join(choice(ascii_letters) for i in range(15)))
-        while len(self.set_id) < set_size:
-            self.set_id.add(''.join(choice(ascii_letters) for i in range(15)))
-        return
 
     def createArr(self, arr_no):
         z = zipfile.ZipFile(path + 'Arr_' + str(arr_no) + '.zip', 'w')
         for i in range(self.count_XMLfile):
             file_name = 'XMLfile_' + str(arr_no) + '_' + str(i) + ".xml"
-            stroka = "<root>\n\t<var name='id' value='%s'/>\n\t<var name='level' value='%s'/> \n\t<objects>\n" %(self.set_id.pop(), randint(1,100))
+            stroka = "<root>\n\t<var name='id' value='%s'/>\n\t<var name='level' value='%s'/> \n\t<objects>\n"\
+                     %(self.list_id[arr_no*self.count_XMLfile+i], randint(1,100))
             for j in range(randint(1,10)):
                 stroka+="\t\t<object name='%s'>\n" %(''.join(choice(ascii_letters) for k in range(randint(5,30))))
             stroka += "\t</objects>\n</root>"
