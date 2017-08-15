@@ -34,7 +34,7 @@ class firstTask(object):
             z.writestr(file_name, stroka)
         z.close()
 
-    # Start function for creating Zip archives
+    # Pool of processes for creating Zip archives
     def createZips(self):
         t1 = time()
         if __name__ == '__main__':
@@ -62,6 +62,7 @@ class secondTask(object):
         z = zipfile.ZipFile(path+self.list_of_zips[nom_zip], 'r')
         list_of_files_in_zip = z.namelist()
 
+        # parse zip file and get id, level, options values
         id_value = []
         id_object = []
         for fname in list_of_files_in_zip:
@@ -76,6 +77,7 @@ class secondTask(object):
             id_value.append([idp, level])
             id_object.append(list_of_object)
 
+        # write id, level. options into .csv-files
         lock.acquire()
         file1 = open(self.out_csv1, "a")
         for i in range(len(list_of_files_in_zip)):
@@ -89,7 +91,9 @@ class secondTask(object):
         file2.close()
         lock.release()
 
-    def make_csv(self, lock):
+    # create .csv files.
+    def create_csv(self, lock):
+        t1 = time()
         file1 = open(self.out_csv1, "w")
         file1.write("id" + ',' + "level" + '\n')
         file2 = open(self.out_csv2, "w")
@@ -107,6 +111,8 @@ class secondTask(object):
             for i in range(len_zips_list):
                 list_of_process[i].join()
 
+        print('Create .csv files time = ' +str(time() - t1) + 's')
+
 
 if __name__ == '__main__':
     global path
@@ -121,10 +127,8 @@ if __name__ == '__main__':
     A.createZips()
 
     # Second task: grep id, level, options from .zip to ,csv files
-    t1 = time()
     B = secondTask()
-    B.make_csv(lock)
+    B.create_csv(lock)
 
-    print('Create .csv files time = ' +str(time() - t1) + 's')
 
 
