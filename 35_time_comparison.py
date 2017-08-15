@@ -3,7 +3,7 @@ from multiprocessing import Pool, Process
 from time import time, sleep
 
 def funct(a):
-    for k in range(1000):
+    for k in range(2000):
         for j in range(10000):
             a = j*(j+1)
 

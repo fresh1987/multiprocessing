@@ -57,6 +57,7 @@ class secondTask(object):
         self.out_csv1 = path+'csv1.csv'
         self.out_csv2 = path+'csv2.csv'
 
+    # Parse zip-archive. Get id, level, options and write them into the csv-files.
     def parse_Zip(self, nom_zip, lock):
         z = zipfile.ZipFile(path+self.list_of_zips[nom_zip], 'r')
         list_of_files_in_zip = z.namelist()
@@ -98,19 +99,22 @@ class secondTask(object):
 
         if __name__ == '__main__':
             list_of_process = []
-            for i in range(len(self.list_of_zips)):
+            len_zips_list = len(self.list_of_zips)
+            for i in range(len_zips_list):
                 list_of_process.append(Process(target=self.parse_Zip, args=(i,lock)))
-            for i in range(len(self.list_of_zips)):
+            for i in range(len_zips_list):
                 list_of_process[i].start()
-            for i in range(len(self.list_of_zips)):
+            for i in range(len_zips_list):
                 list_of_process[i].join()
 
 
 if __name__ == '__main__':
     global path
     lock = Lock()
-    #path = os.path.join(raw_input("Input path to save files or press Enter to save in project directory\n"), '')
-    path = os.path.join("/home/fresh/2017", '')
+    path = ''
+    while os.path.exists(path) is False:
+        path = os.path.join(raw_input("Input path to save files, please\n"), '')
+    #path = os.path.join("/home/pbxadmin/2017/1/", '')
 
     # First task: create ZIPs archives with XML files
     A = firstTask()
@@ -124,6 +128,3 @@ if __name__ == '__main__':
     print('Create .csv files time = ' +str(time() - t1) + 's')
 
 
-
-# 1 sleep(3) in parseZip - отрабатывае один раз. Почему????
-# сделать очередь queue
