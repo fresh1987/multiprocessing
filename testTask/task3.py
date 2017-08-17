@@ -1,14 +1,11 @@
 #coding: utf-8
 from multiprocess import Pool, Lock, Process
-from multiprocess import cpu_count
 import os
 from random import choice,randint
 from string import ascii_letters
 from time import time
 import zipfile
-from functools import partial
 
-lock = Lock()
 
 class firstTask(object):
     def __init__(self):
@@ -110,23 +107,12 @@ class secondTask(object):
             p.map(self.parse_Zip, i)
             p.close()
             p.join()
-            '''
-            list_of_process = []
-            len_zips_list = len(self.list_of_zips)
-
-            for i in range(len_zips_list):
-                list_of_process.append(Process(target=self.parse_Zip, args=(i,lock)))
-            for i in range(len_zips_list):
-                list_of_process[i].start()
-            for i in range(len_zips_list):
-                list_of_process[i].join()
-            '''
-        print('Create .csv files time = ' +str(time() - t1) + 's')
+        print('Create .csv files time = ' + str(time() - t1) + 's')
 
 
 if __name__ == '__main__':
     global path
-
+    lock = Lock()
     path = ''
     #while os.path.exists(path) is False:
     #    path = os.path.join(raw_input("Input path to save files, please\n"), '')
