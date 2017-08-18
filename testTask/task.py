@@ -3,7 +3,7 @@ from multiprocess import Pool, Lock, Process
 import os
 from random import choice,randint
 from string import ascii_letters
-from time import time
+from time import time, sleep
 import zipfile
 
 

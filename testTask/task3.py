@@ -3,8 +3,9 @@ from multiprocess import Pool, Lock, Process
 import os
 from random import choice,randint
 from string import ascii_letters
-from time import time
-import zipfile
+from time import time,sleep
+from zipfile import ZipFile
+from sys import version as py_version
 
 
 class firstTask(object):
@@ -23,7 +24,7 @@ class firstTask(object):
 
     # Write XML files to Zip archive
     def createZip(self, zip_no):
-        z = zipfile.ZipFile(path + 'Zip_' + str(zip_no) + '.zip', 'w')
+        z = ZipFile(path + 'Zip_' + str(zip_no) + '.zip', 'w')
         for i in range(self.count_XMLfile):
             file_name = 'XMLfile_' + str(zip_no) + '_' + str(i) + ".xml"
             stroka = "<root>\n\t<var name='id' value='%s'/>\n\t<var name='level' value='%s'/> \n\t<objects>\n"\
@@ -59,7 +60,7 @@ class secondTask(object):
 
     # Parse zip-archive. Get id, level, options and write them into the csv-files.
     def parse_Zip(self, nom_zip):
-        z = zipfile.ZipFile(path+self.list_of_zips[nom_zip], 'r')
+        z = ZipFile(path+self.list_of_zips[nom_zip], 'r')
         list_of_files_in_zip = z.namelist()
 
         # parse zip file and get id, level, options values
@@ -92,7 +93,7 @@ class secondTask(object):
         lock.release()
 
     # create .csv files.
-    def create_csv(self, lock):
+    def create_csv(self):
         t1 = time()
         file1 = open(self.out_csv1, "w")
         file1.write("id" + ',' + "level" + '\n')
@@ -112,11 +113,16 @@ class secondTask(object):
 
 if __name__ == '__main__':
     global path
+    global lock
     lock = Lock()
     path = ''
-    #while os.path.exists(path) is False:
-    #    path = os.path.join(raw_input("Input path to save files, please\n"), '')
-    path = os.path.join("/home/pbxadmin/2017/1/", '')
+    if py_version[0] == '2':
+        while os.path.exists(path) is False:
+            path = os.path.join(raw_input("Input path to working directory, please\n"), '')
+    else:
+        while os.path.exists(path) is False:
+            path = os.path.join(input("Input path to working directory, please\n"), '')
+    #path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
     # First task: create ZIPs archives with XML files
     A = firstTask()
@@ -124,7 +130,7 @@ if __name__ == '__main__':
 
     # Second task: grep id, level, options from .zip to ,csv files
     B = secondTask()
-    B.create_csv(lock)
+    B.create_csv()
 
 
 
