@@ -1,13 +1,16 @@
 #coding: utf-8
 
-# The nest variant of programm
+# There are I add threading
+
 from multiprocess import Pool, Lock, Process
 import os
 from random import choice,randint
 from string import ascii_letters
-from time import time
+from time import time, sleep
 from zipfile import ZipFile
 from sys import version as py_version
+from multiprocessing import cpu_count
+import threading
 
 
 class firstTask(object):
@@ -59,8 +62,40 @@ class secondTask(object):
                     self.list_of_zips.append(f)
         self.out_csv1 = path+'csv1.csv'
         self.out_csv2 = path+'csv2.csv'
+        self.list_of_Threads = self.get_list_of_Threads()
+
+    def get_list_of_Threads(self):
+        final_list_number = []
+        len_list_of_zips = len(self.list_of_zips)
+        int_part = int(len_list_of_zips / cpu_count())
+        last_element = int_part * cpu_count()
+
+        # destributr zip-archives (threadings) by process
+        for proc in range(cpu_count()):
+            list_number = []
+            for i in range(int_part):
+                list_number.append(i + int_part * proc)
+            if proc + last_element < len_list_of_zips:
+                list_number.append(proc + last_element)
+            final_list_number.append(list_number)
+        #print final_list_number
+        return final_list_number
+
 
     # Parse zip-archive. Get id, level, options and write them into the csv-files.
+    def parse_Zip_proc(self, nom_proc):
+        list_zip_num = self.list_of_Threads[nom_proc]
+        list_Threads = []
+        for thread_num in list_zip_num:
+            list_Threads.append(threading.Thread(target=self.parse_Zip, args=(thread_num,)))
+        for thread_num in range(len(list_zip_num)):
+            list_Threads[thread_num].start()
+        for thread_num in range(len(list_zip_num)):
+            list_Threads[thread_num].join()
+
+
+
+
     def parse_Zip(self, nom_zip):
         z = ZipFile(path+self.list_of_zips[nom_zip], 'r')
         list_of_files_in_zip = z.namelist()
@@ -94,6 +129,7 @@ class secondTask(object):
         file2.close()
         lock.release()
 
+
     # create .csv files.
     def create_csv(self):
         t1 = time()
@@ -105,9 +141,9 @@ class secondTask(object):
         file2.close()
 
         if __name__ == '__main__':
-            i = range(len(self.list_of_zips))
+            i = range(cpu_count())
             p = Pool()
-            p.map(self.parse_Zip, i)
+            p.map(self.parse_Zip_proc, i)
             p.close()
             p.join()
         print('Create .csv files time = ' + str(time() - t1) + 's')
@@ -118,13 +154,15 @@ if __name__ == '__main__':
     global lock
     lock = Lock()
     path = ''
+    '''
     if py_version[0] == '2':
         while os.path.exists(path) is False:
             path = os.path.join(raw_input("Input path to working directory, please\n"), '')
     else:
         while os.path.exists(path) is False:
             path = os.path.join(input("Input path to working directory, please\n"), '')
-    #path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
+    '''
+    path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
 
     # First task: create ZIPs archives with XML files
     A = firstTask()
