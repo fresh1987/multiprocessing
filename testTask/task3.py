@@ -1,7 +1,7 @@
 #coding: utf-8
 
 # The nest variant of programm
-from multiprocess import Pool, Lock, Process
+from multiprocess import Pool, Lock
 import os
 from random import choice,randint
 from string import ascii_letters
@@ -124,8 +124,7 @@ if __name__ == '__main__':
     else:
         while os.path.exists(path) is False:
             path = os.path.join(input("Input path to working directory, please\n"), '')
-    #path = os.path.join("/home/pbxadmin/2017/08.2017/08.08", '')
-
+    
     # First task: create ZIPs archives with XML files
     A = firstTask()
     A.createZips()
