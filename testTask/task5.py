@@ -70,31 +70,31 @@ class secondTask(object):
         list_of_files_in_zip = z.namelist()
 
         # parse zip file and get id, level, options values
-        id_value = []
+        id_level = []
         id_object = []
         for fname in list_of_files_in_zip:
             list_of_object = []
-            for string in z.read(fname).decode("utf-8").split(os.linesep):  #decode is needed for python3
+            for string in z.read(fname).decode("utf-8").split('\n'):  #decode is needed for python3
                 if "name='id'" in string:
-                    idp = string.split("value='")[1].split("'")[0]
+                    idp = string.split("id' value='")[1].split("'")[0]
                 if "name='level'" in string:
-                    level = string.split("value='")[1].split("'")[0]
+                    level = string.split("'level' value='")[1].split("'")[0]
                 if "object name='" in string:
                     list_of_object.append(string.split("object name='")[1].split("'")[0])
-            id_value.append([idp, level])
+            id_level.append([idp, level])
             id_object.append(list_of_object)
 
         # write id, level. options into .csv-files
         lock.acquire()
         file1 = open(self.out_csv1, "a")
         for i in range(len(list_of_files_in_zip)):
-            file1.write(id_value[i][0] + ',' + id_value[i][1] + '\n')
+            file1.write(id_level[i][0] + ',' + id_level[i][1] + '\n')
         file1.close()
 
         file2 = open(self.out_csv2, "a")
         for i in range(len(list_of_files_in_zip)):
             for my_object in id_object[i]:
-                file2.write(id_value[i][0] + ',' + my_object + '\n')
+                file2.write(id_level[i][0] + ',' + my_object + '\n')
         file2.close()
         lock.release()
 
