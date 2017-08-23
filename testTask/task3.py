@@ -9,6 +9,8 @@ from time import time
 from zipfile import ZipFile
 from sys import version as py_version
 
+lock = Lock()
+print("!!!!!!!!!!!!!!!!!!")
 
 class firstTask(object):
     def __init__(self):
@@ -114,9 +116,9 @@ class secondTask(object):
 
 
 if __name__ == '__main__':
-    global path
-    global lock
-    lock = Lock()
+    #global path
+    #global lock
+
     path = ''
     if py_version[0] == '2':
         while os.path.exists(path) is False:
