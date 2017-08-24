@@ -1,6 +1,6 @@
 #coding: utf-8
 
-# The nest variant of programm
+# Version for Linux. With class.
 from multiprocess import Pool, Lock
 import os
 from random import choice,randint
@@ -8,8 +8,6 @@ from string import ascii_letters
 from time import time
 from zipfile import ZipFile
 from sys import version as py_version
-
-lock = Lock()
 
 class firstTask(object):
     def __init__(self, path):
@@ -60,12 +58,14 @@ class secondTask(object):
             for f in files:
                 if ".zip" in f:
                     self.list_of_zips.append(f)
-        self.out_csv1 = self.path+'csv1.csv'
-        self.out_csv2 = self.path+'csv2.csv'
+        self.out_csv1 = os.path.join(self.path, 'csv1.csv')
+        self.out_csv2 = os.path.join(self.path, 'csv2.csv')
 
     # Parse zip-archive. Get id, level, options and write them into the csv-files.
     def parse_Zip(self, nom_zip):
-        global lock
+        a = 12
+        for i in range(10000000):
+            a*=i
         z = ZipFile(self.path+self.list_of_zips[nom_zip], 'r')
         list_of_files_in_zip = z.namelist()
 
@@ -119,6 +119,7 @@ class secondTask(object):
 
 if __name__ == '__main__':
 
+    lock = Lock()
     path = ''
     if py_version[0] == '2':
         while os.path.exists(path) is False:
